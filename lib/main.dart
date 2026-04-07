@@ -14,32 +14,38 @@ class BiblePronounceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseText = Typography.material2021().black;
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bible Pronounce',
       themeMode: ThemeMode.system,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5A48D6)),
-        useMaterial3: true,
-        textTheme: baseText.copyWith(
-          headlineMedium: baseText.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
-          titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        cardTheme: const CardThemeData(
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-        ),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF5A48D6),
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: _theme(brightness: Brightness.light),
+      darkTheme: _theme(brightness: Brightness.dark),
       home: const HomeScreen(),
+    );
+  }
+
+  ThemeData _theme({required Brightness brightness}) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF5A48D6),
+      brightness: brightness,
+    );
+
+    return ThemeData(
+      colorScheme: colorScheme,
+      useMaterial3: true,
+      visualDensity: VisualDensity.comfortable,
+      scaffoldBackgroundColor: colorScheme.surface,
+      cardTheme: CardThemeData(
+        elevation: 0,
+        color: colorScheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: EdgeInsets.zero,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.25),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      ),
     );
   }
 }

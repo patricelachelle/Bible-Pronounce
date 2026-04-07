@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Persists favorite words so users keep them after app restart.
@@ -9,6 +10,9 @@ class FavoritesService {
 
   late SharedPreferences _prefs;
   final Set<String> _favorites = <String>{};
+
+  /// UI listens to this notifier to refresh when favorites change.
+  final ValueNotifier<int> changeNotifier = ValueNotifier<int>(0);
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -28,5 +32,6 @@ class FavoritesService {
       _favorites.add(word);
     }
     await _prefs.setStringList(_key, _favorites.toList()..sort());
+    changeNotifier.value++;
   }
 }

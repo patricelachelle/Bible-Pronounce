@@ -1,18 +1,53 @@
 # Bible Pronounce (Flutter)
 
-An (iOS + Android) app for learning to pronounce difficult Bible names with **real Google Cloud Text-to-Speech (TTS)**.
+A beginner-friendly iOS + Android app for learning to pronounce difficult Bible names with **Google Cloud Text-to-Speech (TTS)**.
 
-## Features
+## UX + Engagement Features
 
-- Search + browse 50+ difficult Bible names
-- Detail screen with:
-  - Word and phonetic spelling
-  - Real Google Cloud TTS playback (normal + slow mode)
-  - Practice recording and replay
-- Uses **phonetic text** for TTS requests to improve pronunciation accuracy
-- Caches generated MP3 audio locally for instant/offline replay after first play
-- Handles loading and error states in the UI
-- Favorites support with local persistence (`shared_preferences`)
+- **Favorites system**
+  - Save words with a heart icon
+  - Dedicated **Favorites** screen
+  - Local persistence with `shared_preferences`
+- **Categories + filtering**
+  - Grouped by **People**, **Places**, and **Books of the Bible**
+  - Quick category filter chips
+- **Practice mode**
+  - One word at a time
+  - Tap to play pronunciation
+  - Tap **Next** to move forward
+  - Optional pronunciation quiz (“Which is correct?”)
+- **Search improvements**
+  - Instant filtering while typing
+- **UI polish**
+  - Navigation icons
+  - Better spacing/typography
+  - Subtle animations (switchers/scales)
+- **Dark mode support**
+  - Light + dark themes with consistent Material 3 color usage
+
+---
+
+## Project Structure (Clean and Simple)
+
+```text
+lib/
+  data/
+    bible_words_data.dart      # Local words dataset + category labels
+  models/
+    bible_word.dart            # BibleWord model + BibleWordCategory enum
+  screens/
+    home_screen.dart           # App shell with bottom navigation
+    word_library_screen.dart   # Search + category filters + word list
+    favorites_screen.dart      # Saved words list
+    practice_screen.dart       # One-by-one practice + optional quiz
+    detail_screen.dart         # Pronunciation playback + recording + favorite toggle
+  services/
+    word_repository.dart       # Filtering/query logic (repository layer)
+    tts_service.dart           # Google TTS request + cache + playback
+    audio_service.dart         # Local file playback for practice recordings
+    favorites_service.dart     # Saved favorites persistence + UI notifier
+  main.dart                    # App entry + theme config
+```
 
 ---
 
@@ -31,26 +66,6 @@ flutter run --dart-define=GOOGLE_TTS_API_KEY=YOUR_GOOGLE_CLOUD_API_KEY
 ```
 
 > If the key is missing, the app still runs and shows an in-app message when TTS is unavailable.
-
----
-
-## Project Structure
-
-```text
-lib/
-  data/
-    bible_words_data.dart      # Local words dataset
-  models/
-    bible_word.dart            # BibleWord model (word + phonetic)
-  screens/
-    home_screen.dart           # Search + verse highlighting UI
-    detail_screen.dart         # TTS controls + recording controls
-  services/
-    tts_service.dart           # Google TTS request + cache + playback
-    audio_service.dart         # Local file playback for practice recordings
-    favorites_service.dart     # Saved favorites persistence
-  main.dart                    # App entry + theme config
-```
 
 ---
 
