@@ -9,10 +9,11 @@ A beginner-friendly, cross-platform Flutter app (iOS + Android) for learning how
 - Detail screen showing:
   - word
   - phonetic spelling
-  - pronunciation audio button
-- Audio playback with play/pause using `just_audio`
+  - **real Google Cloud Text-to-Speech playback**
+  - **voice recording for pronunciation practice**
+- Verse helper to paste Bible verses and **highlight difficult words**
 - Favorites support (persisted locally) using `shared_preferences`
-- Material 3 clean UI + automatic dark mode support
+- Material 3 UI with improved cards, gradients, and spacing
 
 ---
 
@@ -25,10 +26,11 @@ lib/
   models/
     bible_word.dart            # BibleWord model
   screens/
-    home_screen.dart           # Search + list UI
-    detail_screen.dart         # Word details + audio controls
+    home_screen.dart           # Search + verse highlighting UI
+    detail_screen.dart         # Word details + TTS + recording controls
   services/
     audio_service.dart         # Audio player wrapper
+    google_tts_service.dart    # Google Cloud TTS integration
     favorites_service.dart     # Saved favorites persistence
   main.dart                    # App entry + theme config
 ```
@@ -52,37 +54,21 @@ From the project root:
 
 ```bash
 flutter pub get
-flutter run
+flutter run --dart-define=GOOGLE_TTS_API_KEY=YOUR_GOOGLE_CLOUD_API_KEY
 ```
+
+> If `GOOGLE_TTS_API_KEY` is not supplied, the app still runs but TTS playback is disabled with an in-app warning.
 
 ### Run on iOS Simulator
 
 ```bash
 open -a Simulator
-flutter run
+flutter run --dart-define=GOOGLE_TTS_API_KEY=YOUR_GOOGLE_CLOUD_API_KEY
 ```
 
 ### Run on Android Emulator
 
 ```bash
 flutter emulators --launch <emulator_id>
-flutter run
+flutter run --dart-define=GOOGLE_TTS_API_KEY=YOUR_GOOGLE_CLOUD_API_KEY
 ```
-
----
-
-## Notes for Beginners
-
-- Audio URLs are placeholders (`https://example.com/...`).
-- Replace them with real MP3 links (or local assets) to hear actual pronunciation.
-- Favorites are saved on-device and restored at app startup.
-
----
-
-## Next Improvements (Optional)
-
-- Add tabs: **All Words** and **Favorites**
-- Download/caching of audio files
-- Add offline audio assets
-- Add category filters (Old Testament / New Testament)
-- Add “Word of the day”
