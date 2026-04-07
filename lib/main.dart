@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'screens/home_screen.dart';
 import 'services/favorites_service.dart';
+import 'services/recent_verses_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FavoritesService.instance.init();
+  await RecentVersesService.instance.init();
   runApp(const BiblePronounceApp());
 }
 
