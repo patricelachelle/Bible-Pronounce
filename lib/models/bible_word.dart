@@ -2,10 +2,10 @@ class BibleWord {
   const BibleWord({
     required this.word,
     required this.phonetic,
-    required this.audioUrl,
   });
 
   final String word;
+
+  /// Human-readable pronunciation guide used as TTS input for better accuracy.
   final String phonetic;
-  final String audioUrl;
 }

@@ -5,7 +5,7 @@ import 'package:record/record.dart';
 import '../models/bible_word.dart';
 import '../services/audio_service.dart';
 import '../services/favorites_service.dart';
-import '../services/google_tts_service.dart';
+import '../services/tts_service.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.word});
@@ -19,21 +19,35 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   final AudioRecorder _recorder = AudioRecorder();
 
-  bool _isLoading = false;
+  bool _isPlayingNormal = false;
+  bool _isPlayingSlow = false;
   bool _isRecording = false;
   String? _recordingPath;
 
-  Future<void> _togglePlayPause() async {
-    setState(() => _isLoading = true);
+  Future<void> _playTts({required bool slowPlayback}) async {
+    setState(() {
+      _isPlayingNormal = !slowPlayback;
+      _isPlayingSlow = slowPlayback;
+    });
+
     try {
-      await AudioService.instance.toggleTts(widget.word.word);
+      // We intentionally send phonetic text for better pronunciation accuracy.
+      await TtsService.instance.playPronunciation(
+        phoneticText: widget.word.phonetic,
+        slowPlayback: slowPlayback,
+      );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('TTS failed: $error')),
+        SnackBar(content: Text('Could not play pronunciation: $error')),
       );
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isPlayingNormal = false;
+          _isPlayingSlow = false;
+        });
+      }
     }
   }
 
@@ -69,7 +83,6 @@ class _DetailScreenState extends State<DetailScreen> {
     final path = _recordingPath;
     if (path == null) return;
 
-    setState(() => _isLoading = true);
     try {
       await AudioService.instance.toggleLocalFile(path);
     } catch (_) {
@@ -77,8 +90,6 @@ class _DetailScreenState extends State<DetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Recorded audio could not be played.')),
       );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -146,7 +157,7 @@ class _DetailScreenState extends State<DetailScreen> {
             Text('Pronunciation', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             StreamBuilder<PlayerState>(
-              stream: AudioService.instance.stateStream,
+              stream: TtsService.instance.playerStateStream,
               builder: (context, snapshot) {
                 final isPlaying = snapshot.data?.playing ?? false;
 
@@ -155,15 +166,30 @@ class _DetailScreenState extends State<DetailScreen> {
                   runSpacing: 10,
                   children: [
                     FilledButton.icon(
-                      onPressed: _isLoading ? null : _togglePlayPause,
-                      icon: _isLoading
+                      onPressed: _isPlayingNormal || _isPlayingSlow
+                          ? null
+                          : () => _playTts(slowPlayback: false),
+                      icon: _isPlayingNormal
                           ? const SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                      label: Text(isPlaying ? 'Pause Google TTS' : 'Play Google TTS'),
+                      label: const Text('Play pronunciation'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _isPlayingNormal || _isPlayingSlow
+                          ? null
+                          : () => _playTts(slowPlayback: true),
+                      icon: _isPlayingSlow
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.slow_motion_video),
+                      label: const Text('Play slowly'),
                     ),
                     OutlinedButton.icon(
                       onPressed: _toggleRecording,
@@ -182,9 +208,9 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              GoogleTtsService.instance.isConfigured
-                  ? 'Google Cloud voice: en-US-Neural2-D'
-                  : 'Google TTS key missing. Run with --dart-define=GOOGLE_TTS_API_KEY=... to enable real speech.',
+              TtsService.instance.isConfigured
+                  ? 'Google Cloud voice: en-US-Neural2-D (cached for offline replay after first play)'
+                  : 'Google TTS key missing. Run with --dart-define=GOOGLE_TTS_API_KEY=... to enable speech.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
