@@ -95,9 +95,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Future<void> _toggleFavorite() async {
     await FavoritesService.instance.toggleFavorite(widget.word.word);
-    if (mounted) {
-      setState(() {});
-    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -116,7 +114,13 @@ class _DetailScreenState extends State<DetailScreen> {
         actions: [
           IconButton(
             onPressed: _toggleFavorite,
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                key: ValueKey(isFavorite),
+              ),
+            ),
             tooltip: isFavorite ? 'Remove favorite' : 'Add favorite',
           ),
         ],
@@ -150,6 +154,8 @@ class _DetailScreenState extends State<DetailScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Chip(label: Text(widget.word.category.label)),
                 ],
               ),
             ),
@@ -205,13 +211,6 @@ class _DetailScreenState extends State<DetailScreen> {
                   ],
                 );
               },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              TtsService.instance.isConfigured
-                  ? 'Google Cloud voice: en-US-Neural2-D (cached for offline replay after first play)'
-                  : 'Google TTS key missing. Run with --dart-define=GOOGLE_TTS_API_KEY=... to enable speech.',
-              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
