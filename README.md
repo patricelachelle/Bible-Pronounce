@@ -1,6 +1,6 @@
 # Bible Pronounce (Flutter)
 
-A beginner-friendly Flutter app (iOS + Android) for learning to pronounce difficult Bible names with **real Google Cloud Text-to-Speech (TTS)**.
+An (iOS + Android) app for learning to pronounce difficult Bible names with **real Google Cloud Text-to-Speech (TTS)**.
 
 ## Features
 
