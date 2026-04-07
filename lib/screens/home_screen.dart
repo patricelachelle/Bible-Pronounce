@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'favorites_screen.dart';
 import 'practice_screen.dart';
 import 'word_library_screen.dart';
+import 'verse_assistant_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,11 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
     const WordLibraryScreen(),
     FavoritesScreen(),
     const PracticeScreen(),
+    const VerseAssistantScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final titles = ['Word Library', 'Favorites', 'Practice'];
+    final titles = ['Word Library', 'Favorites', 'Practice', 'Verse Assistant'];
 
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(icon: Icon(Icons.library_books_outlined), label: 'Words'),
           NavigationDestination(icon: Icon(Icons.favorite_outline), label: 'Favorites'),
           NavigationDestination(icon: Icon(Icons.school_outlined), label: 'Practice'),
+          NavigationDestination(icon: Icon(Icons.auto_stories_outlined), label: 'Verse'),
         ],
       ),
     );
